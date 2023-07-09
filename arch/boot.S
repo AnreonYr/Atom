@@ -33,7 +33,6 @@ disk_read:
 	outb %al, %dx
 
 	inc %dx
-	shrl $8, %ecx
 	movb %cl, %al
 	outb %al, %dx
 
@@ -47,10 +46,10 @@ disk_read:
 	movb %cl, %al
 	outb %al, %dx
 
-	inc %dx
 	shrl $8, %ecx
 	andb $0b1111, %cl
 
+	inc %dx
 	movb $0b11100000, %al
 	orb %cl, %al
 	outb %al, %dx
@@ -65,7 +64,7 @@ disk_read:
 	.do:
 		pushw %cx
 		call .delay
-		call .check
+		call .read
 		loop .do
 		popw %cx
 	ret
@@ -78,7 +77,7 @@ disk_read:
 				nop
 				nop
 				andb $0b10001000, %al
-				cmpb $0b10000000, %al
+				cmpb $0b00001000, %al
 				jnz .check
 	ret
 
@@ -86,7 +85,7 @@ disk_read:
 		movw $0x1f0, %dx
 		movw $256, %cx
 			.r:
-				inb %dx, %al
+				inw %dx, %ax
 				nop
 				nop
 				nop
