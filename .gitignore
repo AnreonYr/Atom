@@ -1,4 +1,4 @@
 *.bin
 *.o
-./emulator/*.img
-./build/*
+build
+emulator

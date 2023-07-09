@@ -67,44 +67,44 @@ disk_read:
 	xorl %ecx, %ecx
 	movb %bl, %cl
 
-	.do:
+	do:
 		pushw %cx
-		call .delay
-		call .read
+		call delay
+		call read
 		popw %cx
-		loop .do
+		loop do
 	ret
 
-	.delay:
+	delay:
 		movw $0x1f7, %dx
-			.check:
+			check:
 				inb %dx, %al
 				andb $0b10001000, %al
 				cmpb $0b00001000, %al
-				jnz .check
+				jnz check
 	ret
 
-	.read:
+	read:
 		movw $0x1f0, %dx
 		movw $256, %cx
-			.r:
+			r:
 				inw %dx, %ax
 				movw %ax, (%edi)
 				addl $0x2, %edi
-				loop .r
+				loop r
 	ret
 
 print:
 	movb $0x0e, %ah
 	movw %bx, %si
-.s:
+s:
 	movb (%si), %al
 	cmp $0, %al
-	je .e
+	je e
 	int $0x10
 	inc %si
-	jmp .s
-.e:
+	jmp s
+e:
 	ret
 
 message_1:

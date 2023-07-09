@@ -1,19 +1,19 @@
-.code16
-
 .section .text
 
 .global _loader
 
+.code16
+
 _loader:
 	xchg %bx, %bx
 	cmpw $0xaa55, (magic_number)
-	jz .s
-	jnz .e
-.s:
+	jz s
+	jnz e
+s:
 	leaw message_3, %bx
 	call print
-	jmp .o
-.e:
+	jmp o
+e:
 	leaw message_4, %bx
 	call print
 	jmp o
@@ -66,6 +66,7 @@ gdt_data:
 	.long 0x0000ffff
 	.long 0x00cf9200
 gdt_e:
+	jmp .
 
 message_3:
 	.byte	10, 13
