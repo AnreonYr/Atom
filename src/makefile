@@ -1,36 +1,49 @@
-BUILD += ../build
-EMU += ../emulator
-SRC += $(shell find -name "*.[cS]")
+BUILD += ./build
+EMU += ./emulator
+INCLUDE += ./includes
+
+ASRC += $(shell find -name "*.S")
+CSRC += $(shell find -name "*.c")
 OBJ += $(wildcard ../build/*.o)
 
-CFLAG := -m32
-CFLAG += -Qn
-CFLAG += -fno-builtin
-CFLAG += -fno-pic
-CFLAG += -fno-pie
-CFLAG += -fno-stack-protector
-CFLAG += -fomit-frame-pointer
-CFLAG += -mpreferred-stack-boundary=2
-CFLAG += -fno-asynchronous-unwind-tables
+CFLAG += -m32\
+		 -g\
+		 -O0\
+		 -Qn\
+		 -fno-builtin\
+		 -fno-pic\
+		 -fno-pie\
+		 -fno-stack-protector\
+		 -fno-asynchronous-unwind-tables\
+		 -fomit-frame-pointer\
+		 -mpreferred-stack-boundary=2\
+		 -I $(INCLUDE)
+
+.PHONY: bootloader.o kernel.o
 
 dir:
-	mkdir ../build
-	mkdir ../emulator
+	@mkdir $(BUILD)
+	@mkdir $(EMU)
 
 echo:
-	@echo $(SRC)
+	@echo $(CSRC)
+	@echo $(ASRC)
 	@echo $(OBJ)
 
-.PHONY: bootloader.bin
+bootloader.o: $(ASRC)
+	gcc $(CFLAG) -c $^
 
-bootloader.bin: ./arch/boot.S ./arch/loader.S
-	gcc -m32 -c $^
-	ld -T ./config/linker.ld boot.o loader.o -o bootloader.bin
-	objcopy -R .note.gnu.property -O binary bootloader.bin
-	dd if=../build/bootloader.bin of=../emulator/os.img bs=512 conv=notrunc
-	rm *.o
-	mv *.bin $(BUILD)
+kernel.o: $(CSRC)
+	gcc $(CFLAG) -c $^
+
+os.bin: bootloader.o kernel.o 
+	ld -T ./config/linker.ld *.o -o $@
+	objcopy --only-keep-debug $@ $(BUILD)/os.debug
+	objcopy -R .note.gnu.property -O binary $@
+	@mv $@ $(BUILD)
+	dd if=$(BUILD)/$@ of=$(EMU)/os.img bs=512 conv=notrunc
+	@rm *.o
 
 qemu-gdb:
-	qemu-system-i386 -m 128M -S -s ../emulator/os.img
-	cgdb -ex 'target remote :1234' -ex 'set architecture i386'
+	qemu-system-i386 -m 128M -S -s ./emulator/os.img &
+	cgdb -s $(BUILD)/os.debug -ex 'target remote :1234' -ex 'set architecture i386'
