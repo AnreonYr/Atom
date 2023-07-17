@@ -2,34 +2,48 @@ OUTPUT_FORMAT(elf32-i386)
 OUTPUT_ARCH(i386)
 ENTRY(boot_)
 
-MEMORY {
-	boot (RX): ORIGIN = 0x7c00, LENGTH = 512
-	loader (RX): ORIGIN = 0x8000, LENGTH = 2K
-	kernel (RX): ORIGIN = 0x100000, LENGTH = 1M
-}
-
 SECTIONS {
 
-	.boot : AT (0x0) {
-		boot.o (.boot)
-	} > boot
-	.loader : AT (0x200) {
-		loader.o (.loader) 
-	} > loader
+	gdt = 0xC0806000;
+	pde = 0xC0400000;
+	pte = 0xC0401000;
 
-	.text : AT(0xa00) ALIGN(4K) {
+	. = 0x7C00;
+	.boot : AT (0x0) {
+		* (.boot)
+	}
+
+	. = 0x8000;
+	.loader : AT (0x200) {
+		* (.loader) 
+	}
+
+	. = 0xC0800000;
+	.text : AT(0x1000) ALIGN(4K) {
+		text = .;
 		* (.text)
-	} > kernel
-	.data : {
+	}
+
+	. = 0xC0801000;
+	.data : ALIGN(4K) {
+		data = .;
 		* (.data)
-	} > kernel
-	.rodata : {
+	}
+
+	. = 0xC0802000;
+	.rodata : ALIGN(4K) {
+		rodata = .;
 		* (.rodata)
-	} > kernel
-	.bss : {
+	}
+
+	. = 0xC0803000;
+	.bss : ALIGN(4K) {
+		bss = .;
 		* (.bss)
-	} > kernel
+	}
+
+	. = 0xC0804000;
 	.note.gnu.property : ALIGN(4K) {
 		*(.note.gnu.property)
-	} > kernel
+	}
 }

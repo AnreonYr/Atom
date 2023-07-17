@@ -5,9 +5,11 @@
 	.code16
 
 	boot_:
+	# Set display mode to 80*25
 		movw $0x3, %ax
 		int	 $0x10
-
+	
+	# Init registers
 		movw $0x0, %ax
 		movw %ds, %ax
 		movw %ax, %ss
@@ -16,29 +18,39 @@
 
 		leaw message_1, %bx
 		call print
-		leaw message_2, %bx
-		call print
-
-		# %edi memory address | %ecx start sector | %bl sector number
-
+	
+	# Load loader
+	# %edi memory address | %ecx start sector | %bl sector number
 		movl $0x8000, %edi
 		movl $0x1, %ecx
 		movb $0x4, %bl
 		call read
-
+	
+	# Examine
+		cmpw $0xaa55, (examination)
+		jz finish
+		jnz error
+	error:
+		leaw message_3, %bx
+		call print
+		hlt
+	finish:
+		leaw message_2, %bx
+		call print
+	
 		jmp loader_
 		
 	print:
 		movb $0x0e, %ah
 		movw %bx, %si
-	s:
+	1:
 		movb (%si), %al
 		cmp $0, %al
-		je e
+		je 2f
 		int $0x10
 		inc %si
-		jmp s
-	e:
+		jmp 1b
+	2:
 		ret
 
 	read:
@@ -85,30 +97,33 @@
 
 		delay:
 			movw $0x1f7, %dx
-				check:
+				1:
 					inb %dx, %al
 					andb $0b10001000, %al
 					cmpb $0b00001000, %al
-					jnz check
+					jnz 1b
 		ret
 
 		sread:
 			movw $0x1f0, %dx
 			movw $256, %cx
-				r:
+				2:
 					inw %dx, %ax
 					movw %ax, (%edi)
 					addl $0x2, %edi
-				loop r
+				loop 2b
 		ret
 
-
 message_1:
-	.asciz "BOOTING ..."
+	.asciz "BOOT OK"
 	.byte	10, 13, 0
 message_2:
 	.byte	10, 13
-	.asciz "LOADING ..."
+	.asciz "LOAD OK"
+	.byte	10, 13, 0
+message_3:
+	.byte	10, 13
+	.asciz "LOAD NO"
 	.byte	10, 13, 0
 
 .fill 0x1FE-(.-boot_), 1, 0

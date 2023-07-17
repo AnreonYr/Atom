@@ -1,10 +1,19 @@
-// Copyright (c) 2023 AnreonYr. All Rights Reserved.
-
-#include "../includes/tty.h"
+#include "../include/tty.h"
+#include "../include/dt.h"
+#include "../include/page.h"
 #include <stdint.h>
 
-extern void kernel_init() {
-  tty_screen_clear();
-  tty_set_theme(VGA_COLOR_BLUE, VGA_COLOR_BLACK);
-  tty_string_put("HELLO WORLD\nSECOND LINNE");
+void kernel_init() {
+	// Init TTY
+	tty_screen_clear();
+	tty_set_theme(TTY_COLOR_GREEN, TTY_COLOR_BLACK);
+	tty_string_put("kernel_init");
+
+	// Init gdt
+	gdt_init();
+}
+
+void kernel() {
+	kernel_init();
+	while (1) {}
 }

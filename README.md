@@ -8,7 +8,7 @@ It devote to develop a new Operating System form
 
 ### Goal
 
-- Virtaul File System [x]
+- Virtual File System [x]
 - Task Dispatch [x]
 - Memory Management [x]
 - Device Management [x]
