@@ -73,7 +73,6 @@
 	.equ pa_pte, 0x101000
 
 	create_pde:
-		xchg %bx, %bx
 		movl $pa_pde, %ebx
 	# map pte0 to pde0
 		movl $pa_pte, %eax
@@ -128,7 +127,6 @@
 		ret
 
 	enable_page:
-		xchg %bx, %bx
 		movl $pa_pde, %eax
 		movl %eax, %cr3
 		movl %cr0, %eax

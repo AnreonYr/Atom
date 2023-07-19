@@ -24,8 +24,8 @@
 #define TTY_COLOR_WHITE				0xF
 
 void tty_set_theme(uint16_t fg, uint16_t bg);
-void tty_char_put(char symbol);
-void tty_string_put(char *symbol);
+void tty_char_print(char symbol);
+void tty_string_print(char *symbol);
 void tty_screen_clear();
 void tty_sreen_scroll();
 

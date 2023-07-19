@@ -5,8 +5,10 @@ ENTRY(boot_)
 SECTIONS {
 
 	gdt = 0xC0806000;
-	pde = 0xC0400000;
-	pte = 0xC0401000;
+	idt = 0xC080A000;
+
+	pde = 0xC0700000;
+	pte = 0xC0400000;
 
 	. = 0x7C00;
 	.boot : AT (0x0) {
@@ -20,25 +22,21 @@ SECTIONS {
 
 	. = 0xC0800000;
 	.text : AT(0x1000) ALIGN(4K) {
-		text = .;
 		* (.text)
 	}
 
 	. = 0xC0801000;
 	.data : ALIGN(4K) {
-		data = .;
 		* (.data)
 	}
 
 	. = 0xC0802000;
 	.rodata : ALIGN(4K) {
-		rodata = .;
 		* (.rodata)
 	}
 
 	. = 0xC0803000;
 	.bss : ALIGN(4K) {
-		bss = .;
 		* (.bss)
 	}
 
