@@ -69,28 +69,26 @@
 		jmp .
 
 
-	.equ pa_pde, 0x100000
-	.equ pa_pte, 0x101000
+	.equ pa_pte, 0x100000
+	.equ pa_pde, 0x300000
 
 	create_pde:
-		xchg %bx, %bx
 		movl $pa_pde, %ebx
 	# map pte0 to pde0
 		movl $pa_pte, %eax
 		orl $0x7, %eax
 		movl %eax, (%ebx)
 
-	# map pte0 to pde768
-		add $0xc00, %ebx
-		movl $pa_pte, %eax
+	# map all page table to 0xC0000000 to 0xC0004000
+		add $0xC00, %ebx
+		movl $pa_pde, %eax
 		orl $0x7, %eax
 		movl %eax, (%ebx)
 
-	# map pde0 to pde769
-	# map all page table to 0xC0004000 to 0xC0008000
+	# map pte0 to pde769
 		add $0x4, %ebx
-		movl $pa_pde, %eax
-		orl $0x107, %eax
+		movl $pa_pte, %eax
+		orl $0x7, %eax
 		movl %eax, (%ebx)
 
 	# map kernel to 0xC0008000 ~ 0xC0CFFFFF
@@ -128,7 +126,6 @@
 		ret
 
 	enable_page:
-		xchg %bx, %bx
 		movl $pa_pde, %eax
 		movl %eax, %cr3
 		movl %cr0, %eax

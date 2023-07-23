@@ -13,9 +13,6 @@ CFLAG += -m32\
 		 -fno-pic\
 		 -fno-pie\
 		 -fno-stack-protector\
-		 -fno-asynchronous-unwind-tables\
-		 -fomit-frame-pointer\
-		 -mpreferred-stack-boundary=2\
 		 -ffreestanding\
 		 -I $(INCLUDE)
 
@@ -39,13 +36,15 @@ obj: $(SRC)
 os.bin: obj
 	ld -T ./config/linker.ld $(OBJ) -o $@
 	@cp $@ $(BUILD)/os.elf
-	objcopy --only-keep-debug $@ $(BUILD)/os.debug
 	objcopy -R .note.gnu.property -O binary $@
 	@mv *.bin $(BUILD)
+
+os.debug: ./build/os.elf
+	objcopy --only-keep-debug $^ $(BUILD)/$@
 
 os.img: os.bin
 	dd if=$(BUILD)/$^ of=$(EMU)/$@ bs=512 conv=notrunc
 
-qemu-gdb: os.img
+qemu-gdb: os.img os.debug
 	qemu-system-i386 -m 128M -S -s ./emulator/os.img &
 	cgdb -s $(BUILD)/os.debug -ex 'target remote :1234' -ex 'set architecture i386'
