@@ -5,7 +5,7 @@
 uint16_t theme = 0;
 
 // 文本缓冲区
-uint16_t *buffer = (uint16_t *)(0xC00B8000);
+uint16_t *buffer = (uint16_t *)(0xC04B8000);
 
 // 列 行
 uint16_t ROW, COL = 0;

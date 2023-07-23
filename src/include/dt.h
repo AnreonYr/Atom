@@ -56,7 +56,7 @@ typedef struct idt_t {
 
 typedef struct poniter_t {
 	uint16_t length;
-	uint32_t* index;
+	uint32_t *index;
 } __attribute__((packed)) pointer_t;
 
 typedef struct selector_t {

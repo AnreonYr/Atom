@@ -2,7 +2,7 @@
 #include <stdint.h>
 
 extern idt_t idt[IDT_SIZE];
-pointer_t idt_ptr = {sizeof(idt)-1, idt};
+pointer_t idt_ptr = {sizeof(idt)-1, (uint32_t *)idt};
 
 void idt_init() {
 	asm volatile ("lidt idt_ptr");

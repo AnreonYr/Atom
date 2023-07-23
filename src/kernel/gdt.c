@@ -2,7 +2,7 @@
 #include <stdint.h>
 
 extern gdt_t gdt[GDT_SIZE];
-pointer_t gdt_ptr = {sizeof(gdt)-1, gdt};
+pointer_t gdt_ptr = {sizeof(gdt)-1, (uint32_t *)gdt};
 
 void gdt_init() {
 	gdt_create(0, 0, 0, 0, 0, 0, 0, 0);

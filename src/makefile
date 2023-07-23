@@ -13,13 +13,7 @@ CFLAG += -m32\
 		 -fno-pic\
 		 -fno-pie\
 		 -fno-stack-protector\
-		 -fno-asynchronous-unwind-tables\
-		 -fomit-frame-pointer\
-		 -mpreferred-stack-boundary=2\
 		 -ffreestanding\
-		 -Wno-pointer-to-int-cast\
-		 -Wno-address-of-packed-member\
-		 -Wno-incompatible-pointer-types\
 		 -I $(INCLUDE)
 
 .PHONY: clean
@@ -45,7 +39,7 @@ os.bin: obj
 	objcopy -R .note.gnu.property -O binary $@
 	@mv *.bin $(BUILD)
 
-os.debug: os.bin
+os.debug: ./build/os.elf
 	objcopy --only-keep-debug $^ $(BUILD)/$@
 
 os.img: os.bin

@@ -13,9 +13,13 @@ void kernel_init() {
 	// Init idt
 	idt_init();
 
-	asm volatile ("xchg %bx, %bx");
+	mmap(0x40000000, 0x800000, 7);
+	mmap(0x50000000, 0x800000, 7);
 
-	map(0x3ff00000, 0x800000, PG_PR | PG_CD | PG_RW | PG_US, 0);
+	asm volatile ("xchg %bx, %bx");
+	ummap(0x40000000);
+	asm volatile ("xchg %bx, %bx");
+	ummap(0x50000000);
 }
 
 void kernel() {

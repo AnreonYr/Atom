@@ -4,11 +4,11 @@ ENTRY(boot_)
 
 SECTIONS {
 
-	gdt = 0xC0806000;
-	idt = 0xC080A000;
+	gdt = 0xC080A000;
+	idt = 0xC080C000;
 
-	pde = 0xC0700000;
-	pte = 0xC0400000;
+	/* pde = 0xC0701000; */
+	/* pte = 0xC0400000; */
 
 	. = 0x7C00;
 	.boot : AT (0x0) {
